@@ -3,15 +3,28 @@ const { Schema, model } = require("mongoose");
 const Author = new Schema({
   full_name: {
     type: String,
-    required: true
+    required: true,
+    set: (value) => value.trim(),
+    minLength:[3,"Ism kamida 3 ta belgidan iborat bo'lishi kerak"],
+    maxLength:50,
+    match: /^[a-zA-Z/s] + $/
   },
   birth_year: {
-    type: Date,
-    required: true
+    type: Number,
+    required: true,
+    min:0,
+    max:new Date().getFullYear()
+
   },
   death_year: {
-    type: String,
-    required: true
+    type: Number,
+    required: true,
+    validate:{
+      validator:function (value) {
+        return value > this.birth_year
+      },
+      message: "O'lim yili tug'ilish yilidan katta bo'lishi kerak"
+    }
   },
   bio: {
     type: String,
@@ -20,10 +33,10 @@ const Author = new Schema({
   period: {
     type: String,
     required: true,
+    default: "Temuriylar davri",
     enum: {
       values: ["Temuriylar davri", "Jadid davri", "Sovet davri", "Mustaqillik davri"],
-      default: "Temuriylar davri",
-      message: "{Values} bunday qiymat ko'rsatilmagan"
+      message: "{VALUE} bunday qiymat ko'rsatilmagan"
     }
   },
   work: {

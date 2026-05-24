@@ -3,9 +3,25 @@ const BookSchema = require("../schema/book.schema");
 
 const getAllBooks = async (req, res) => {
   try {
-    const book = await BookSchema.find();
+    const books = await BookSchema.find().populate("author_info", "-_id -createdAt -updatedAt -__v");
 
-    res.status(200).json(book);
+    // BookSchema.populate(book, {path:"author_info"})
+
+    res.status(200).json(books);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+const search = async (req, res) => {
+  try {
+    const { searchingvalue } = req.query;
+    const books = await BookSchema.find({
+      full_name: { $regex: searchingvalue, $options: "i" },
+    });
+
+    res.status(200).json(books);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -15,17 +31,18 @@ const getAllBooks = async (req, res) => {
 
 const addBook = async (req, res) => {
   try {
-    const { title, author,  published_year, description, genre, language, region } =
+    const { title, published_year, pages, publisher, period, genres, details, author_info } =
       req.body;
 
     await BookSchema.create({
       title,
-      author,
       published_year,
-      description,
-      genre,
-      language,
-      region,
+      pages,
+      genres,
+      details,
+      publisher,
+      period,
+      author_info
     });
 
     res.status(201).json({
@@ -61,10 +78,11 @@ const getOneBook = async (req, res) => {
 const updateBook = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, author, published_year, description, genre, language, region, } =
+    const { title, published_year, pages, publisher, period,  genres, details, author_info } =
       req.body;
 
     const foundedBook = await BookSchema.findById(id);
+
 
     if (!foundedBook) {
       return res.status(404).json({
@@ -74,12 +92,13 @@ const updateBook = async (req, res) => {
 
     await BookSchema.updateOne({_id: id}, {
       title,
-      author,
       published_year,
-      description,
-      genre,
-      language,
-      region,
+      pages, 
+      genres, 
+      details,
+      publisher,
+      period,
+      author_info
     });
 
     res.status(404).json({
@@ -122,4 +141,5 @@ module.exports = {
   getOneBook,
   updateBook,
   deleteBook,
+  search
 };
