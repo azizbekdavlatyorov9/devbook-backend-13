@@ -1,12 +1,12 @@
 const User = require("../schema/users.schema");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { v4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 
 const Register = async (req, res, next) => {
   const { username, email, password } = req.body;
 
-  if (!usename || !email || !password) {
+  if (!username || !email || !password) {
     return res.status(400).json({
       message: "username, email, password are required",
     });
@@ -53,9 +53,9 @@ const Login = async (req, res, next) => {
   const checkPassword = await bcrypt.compare(password, foundedUser.password);
 
   if (checkPassword) {
-    const payload = { id: foundedEmail.id, email: foundedEmail.email };
+    const payload = { id: foundedUser.id, email: foundedUser.email };
     const token = jwt.sign(payload, process.env.SECRET_KEY, {
-      expiresIn: "5s",
+      expiresIn: "1h",
     });
 
     return res.status(200).json({

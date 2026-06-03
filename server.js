@@ -29,7 +29,7 @@ app.post("/upload", upload.array("upload"), (req, res) => {
 connectDB();
 
 // Router
-app.use("/auth", router);
+app.use(router);
 app.use(authorRouter);
 app.use(BookRouter);
 
