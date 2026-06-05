@@ -6,10 +6,10 @@ const BookRouter = require("./router/book.routes");
 require("dotenv").config();
 const upload = require("./middlewares/upload");
 const errorMiddleware = require("./middlewares/error.middleware");
-const router = require("./router/auth.routes");
+const authRouter = require("./router/auth.routes");
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 
@@ -29,7 +29,7 @@ app.post("/upload", upload.array("upload"), (req, res) => {
 connectDB();
 
 // Router
-app.use(router);
+app.use(authRouter);
 app.use(authorRouter);
 app.use(BookRouter);
 

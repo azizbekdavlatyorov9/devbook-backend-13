@@ -1,14 +1,13 @@
 const AuthorSchema = require("../schema/author.schema");
 const CustomErrorHandler = require("../error/error");
 
-
 const getAllAuthors = async (req, res, next) => {
   try {
     const authors = await AuthorSchema.find();
 
     res.status(200).json(authors);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -21,7 +20,7 @@ const search = async (req, res, next) => {
 
     res.status(200).json(authors);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -44,7 +43,7 @@ const addAuthor = async (req, res, next) => {
       message: "Added new author",
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -55,12 +54,12 @@ const getOneAuthor = async (req, res, next) => {
     const foundedAuthor = await AuthorSchema.findById(id);
 
     if (!foundedAuthor) {
-     throw CustomErrorHandler.NotFound("Author not found")
+      throw CustomErrorHandler.NotFound("Author not found");
     }
 
     res.status(200).json(foundedAuthor);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -73,7 +72,7 @@ const updateAuthor = async (req, res, next) => {
     const foundedAuthor = await AuthorSchema.findById(id);
 
     if (!foundedAuthor) {
-      throw CustomErrorHandler.NotFound("Author not found")
+      throw CustomErrorHandler.NotFound("Author not found");
     }
 
     await AuthorSchema.updateOne(
@@ -93,7 +92,7 @@ const updateAuthor = async (req, res, next) => {
       message: "Updated author",
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -104,7 +103,7 @@ const deleteAuthor = async (req, res, next) => {
     const foundedAuthor = await AuthorSchema.findById(id);
 
     if (!foundedAuthor) {
-      throw CustomErrorHandler.NotFound("Author not found")
+      throw CustomErrorHandler.NotFound("Author not found");
     }
 
     await AuthorSchema.findByIdAndDelete({ _id: id });
@@ -113,7 +112,7 @@ const deleteAuthor = async (req, res, next) => {
       message: "Deleted author",
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 

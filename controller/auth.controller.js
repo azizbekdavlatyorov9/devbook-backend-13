@@ -1,37 +1,38 @@
-const User = require("../schema/users.schema");
+const CustomErrorHandler = require("../error/error");
+const AuthSchema = require("../schema/auth.schema");
 const bcrypt = require("bcryptjs");
-const { v4 } = require("uuid");
+const sendEmail = require("../utils/email-sender");
 const jwt = require("jsonwebtoken");
 
 const Register = async (req, res, next) => {
-  const { username, email, password } = req.body;
-
-  if (!username || !email || !password) {
-    return res.status(400).json({
-      message: "username, email, password are required",
-    });
-  }
   try {
-    const foundedEmail = await User.findOne({
+    const { username, email, password } = req.body;
+
+    const foundedUser = await AuthSchema.findOne({
       email,
     });
 
-    if (foundedEmail) {
-      return res.status(400).json({
-        message: "Email already exists",
-      });
+    if (foundedUser) {
+      throw CustomErrorHandler.UnAuthorized("User already exists");
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const randomCode = Array.from({ length: 6 }, () =>
+      Math.floor(Math.random() * 9),
+    ).join("");
 
-    const user = new User({
-      id: v4(),
+    const dateNow = Date.now() + 120000;
+
+    const hashPassword = await bcrypt.hash(password, 12);
+
+    await sendEmail(email, randomCode);
+
+    await AuthSchema.create({
       username,
       email,
-      password: hashedPassword,
+      password: hashPassword,
+      otp: randomCode,
+      otpTime: dateNow,
     });
-    await user.save();
-
-    return res.status(201).json({
+    res.status(201).json({
       message: "Registered",
     });
   } catch (err) {
@@ -39,37 +40,84 @@ const Register = async (req, res, next) => {
   }
 };
 
-const Login = async (req, res, next) => {
-  const { email, password } = req.body;
+const Verify = async (req, res, next) => {
+  try {
+    const { email, code } = req.body;
 
-  const foundedUser = await User.findOne({ email });
+    const foundedUser = await AuthSchema.findOne({ email });
 
-  if (!foundedUser) {
-    return res.status(401).json({
-      message: "User not found",
-    });
-  }
+    if (!foundedUser) {
+      throw CustomErrorHandler.UnAuthorized("User not found");
+    }
 
-  const checkPassword = await bcrypt.compare(password, foundedUser.password);
+    if (foundedUser.otpTime < Date.now()) {
+      throw CustomErrorHandler.UnAuthorized("Code expired");
+    }
 
-  if (checkPassword) {
-    const payload = { id: foundedUser.id, email: foundedUser.email };
+    if (foundedUser.otp !== code) {
+      throw CustomErrorHandler.UnAuthorized("Wrong code");
+    }
+
+    const payload = {
+      id: foundedUser._id,
+      email: foundedUser.email,
+      role: foundedUser.role,
+    };
     const token = jwt.sign(payload, process.env.SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "15d",
     });
 
-    return res.status(200).json({
+    await AuthSchema.findByIdAndUpdate(foundedUser._id, {
+      otp: "",
+      otpTime: 0,
+    });
+
+    res.status(200).json({
       message: "Success",
       token,
     });
-  } else {
-    return res.status(401).json({
-      message: "Wrong password",
-    });
+  } catch (error) {
+    next(error)
+  }
+};
+
+const Login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    const foundedUser = await AuthSchema.findOne({ email });
+
+    if (!foundedUser) {
+      throw CustomErrorHandler.UnAuthorized("User not found");
+    }
+    const decode = await bcrypt.compare(password, foundedUser.password);
+
+    if (decode) {
+      const randomCode = Array.from({ length: 6 }, () =>
+        Math.floor(Math.random() * 9),
+      ).join("");
+
+      const dateNow = Date.now() + 120000;
+
+      await sendEmail(email, randomCode);
+
+      await AuthSchema.findByIdAndUpdate(foundedUser._id, {
+        otp: randomCode,
+        otpTime: dateNow,
+      });
+      res.status(200).json({
+        message: "Please check your email for the code",
+      });
+    } else {
+      throw CustomErrorHandler.UnAuthorized("Wrong password");
+    }
+  } catch (error) {
+   next(error)
   }
 };
 
 module.exports = {
   Register,
   Login,
+  Verify,
 };

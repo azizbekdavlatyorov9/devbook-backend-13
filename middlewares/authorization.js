@@ -1,21 +1,18 @@
 const jwt = require("jsonwebtoken");
+const CustomErrorHandler = require("../error/error");
 
-function authorization(req, res, next) {
-  const authorization = req.headers.authorization;
-
-  if (!authorization) {
-    return res.status(401).json({
-      message: "Bearer token is required",
-    });
-  }
+module.exports = function authorization(req, res, next) {
   try {
+    const authorization = req.headers.authorization;
+
+    if (!authorization) {
+      throw CustomErrorHandler.BadRequest("No token provided");
+    }
     const bearer = authorization.split(" ")[0];
     const token = authorization.split(" ")[1];
 
     if (bearer !== "Bearer" || !token) {
-      return res.status(401).json({
-        message: "Invalid token",
-      });
+      throw CustomErrorHandler.BadRequest("Invalid token");
     }
     const decode = jwt.verify(token, process.env.SECRET_KEY);
     req.user = decode;
@@ -24,6 +21,4 @@ function authorization(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
-
-module.exports = authorization;
+};

@@ -1,12 +1,11 @@
-const CustomErrorHandler = require("../error/error")
-const bookValidator = require("../validator/book.validator")
-
+const CustomErrorHandler = require("../error/error");
+const bookValidator = require("../validator/book.validator");
 
 module.exports = function (req, res, next) {
-  const { error } = bookValidator(req.body)
+  const { error } = bookValidator(req.body);
 
-  if(error) {
-    throw CustomErrorHandler.BadRequest(error)
+  if (error) {
+    throw CustomErrorHandler.BadRequest(error);
   }
-  next()
-}
+  next();
+};
