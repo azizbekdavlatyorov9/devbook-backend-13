@@ -12,8 +12,6 @@ const getAllBooks = async (req, res, next) => {
       "Quote",
       
     )
-
-
     res.status(200).json(books);
   } catch (error) {
     next(error);
