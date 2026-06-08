@@ -8,10 +8,14 @@ const upload = require("./middlewares/upload");
 const errorMiddleware = require("./middlewares/error.middleware");
 const authRouter = require("./router/auth.routes");
 const app = express();
+const cookieParser = require("cookie-parser");
+const CitationRouter = require("./router/citation.routes");
+const likeRouter = require("./router/like.routes");
 
 const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser())
 
 //upload_file
 app.use("/images", express.static("uploads/images"));
@@ -32,6 +36,8 @@ connectDB();
 app.use(authRouter);
 app.use(authorRouter);
 app.use(BookRouter);
+app.use(CitationRouter)
+app.use(likeRouter)
 
 app.use(errorMiddleware);
 

@@ -1,17 +1,13 @@
 const BookSchema = require("../schema/book.schema");
 const CustomErrorHandler = require("../error/error");
+const CitationSchema = require("../schema/citation.schema");
 
 const getAllBooks = async (req, res, next) => {
   try {
-    const books = await BookSchema.find()
-    .populate(
+    const books = await BookSchema.find().populate(
       "author_info",
       "-_id -createdAt -updatedAt -__v",
-    )
-    .populate(
-      "Quote",
-      
-    )
+    );
     res.status(200).json(books);
   } catch (error) {
     next(error);
@@ -41,6 +37,7 @@ const addBook = async (req, res, next) => {
       genres,
       details,
       author_info,
+      quotes,
     } = req.body;
 
     await BookSchema.create({
@@ -52,6 +49,7 @@ const addBook = async (req, res, next) => {
       publisher,
       period,
       author_info,
+      quotes,
     });
 
     res.status(201).json({
@@ -72,7 +70,12 @@ const getOneBook = async (req, res, next) => {
       throw CustomErrorHandler.NotFound("Book not found");
     }
 
-    res.status(200).json(foundedBook);
+    const foundedCitations = await CitationSchema.find({ book_id: id });
+
+    res.status(200).json({
+      data: foundedBook,
+      citation: foundedCitations,
+    });
   } catch (error) {
     next(error);
   }
@@ -90,6 +93,7 @@ const updateBook = async (req, res, next) => {
       genres,
       details,
       author_info,
+      quotes,
     } = req.body;
 
     const foundedBook = await BookSchema.findById(id);
@@ -109,6 +113,7 @@ const updateBook = async (req, res, next) => {
         publisher,
         period,
         author_info,
+        quotes,
       },
     );
 
