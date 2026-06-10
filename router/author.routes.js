@@ -10,6 +10,7 @@ const {
 const authorValidateMiddleware = require("../middlewares/author.validate.middleware");
 const authorization = require("../middlewares/authorization");
 const adminChecker = require("../middlewares/admin-checker");
+const multer = require("../config/multer");
 
 const authorRouter = Router();
 
@@ -19,6 +20,7 @@ authorRouter.get("/author_search", authorization, search);
 authorRouter.post(
   "/add_author",
   adminChecker,
+  multer.single("upload_image"),
   authorValidateMiddleware,
   addAuthor,
 );

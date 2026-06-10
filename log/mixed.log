@@ -1,0 +1,31 @@
+warn: Warn logger
+warn: Warn logger
+warn: Warn logger
+[33mwarn[39m: Warn logger
+warn: Warn logger
+warn: Warn logger
+undefined
+undefined
+undefined
+undefined
+undefined
+{
+  message: 'Warn logger',
+  level: 'warn',
+  timestamp: '2026-06-09T21:03:56.770Z'
+}
+{
+  message: 'Warn logger',
+  level: 'warn',
+  timestamp: '2026-06-09T21:04:11.482Z'
+}
+{
+  message: 'Warn logger',
+  level: 'warn',
+  timestamp: '2026-06-10T04:58:02.141Z'
+}
+{
+  message: 'Warn logger',
+  level: 'warn',
+  timestamp: '2026-06-10T05:22:35.570Z'
+}

@@ -26,6 +26,8 @@ const search = async (req, res, next) => {
 
 const addAuthor = async (req, res, next) => {
   try {
+    console.log("ok");
+    
     const { full_name, birth_year, death_year, bio, period, work, region } =
       req.body;
 
@@ -37,6 +39,7 @@ const addAuthor = async (req, res, next) => {
       period,
       work,
       region,
+      picture:"http://localhost:4001/uploads/" + req.file.filename
     });
 
     res.status(201).json({

@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const { Schema, model } = require("mongoose");
 
 const Author = new Schema(
@@ -49,6 +50,10 @@ const Author = new Schema(
       required: true,
     },
     region: {
+      type: String,
+      required: true,
+    },
+    picture: {
       type: String,
       required: true,
     },
