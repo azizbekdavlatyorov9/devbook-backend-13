@@ -1,9 +1,9 @@
 const { Router } = require("express")
-const { addLike } = require("../controller/like.controller");
+const { Like } = require("../controller/like.controller");
 const authorization = require("../middlewares/authorization");
 
 const likeRouter = Router();
 
-likeRouter.post("/like", authorization, addLike);
+likeRouter.patch("/like/:id", authorization, Like);
 
 module.exports = likeRouter;

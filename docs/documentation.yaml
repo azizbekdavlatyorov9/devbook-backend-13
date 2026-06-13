@@ -1,0 +1,193 @@
+openapi: 3.0.0
+
+info:
+  title: Devbook API
+  version: 1.0.0
+  description: API documentation for Devbook application
+
+  servers:
+    - url: http://localhost:4001
+      description: Local development server
+          path:
+          post:
+            tags:
+              - Authorization
+              summary: User registration
+              description: Create a new user account and send OTP code to email
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - username
+                        - email
+                        - password
+                      properties:
+                        username:
+                          type: string
+                          default: azizbek
+                        email:
+                          type: string
+                          example:
+
+#       /register:
+#         post:
+# tags:
+# - Auth
+# summary: Register new user
+# description: Create a new account and send OTP code to email
+# requestBody:
+# required: true
+# content:
+# application/json:
+# schema:
+# type: object
+# required:
+# - username
+# - email
+# - password
+# properties:
+# username:
+# type: string
+# example: azizbek
+# email:
+# type: string
+# example: [aziz@gmail.com](mailto:aziz@gmail.com)
+# password:
+# type: string
+# example: Password123
+
+# ```
+#   responses:
+#     "201":
+#       description: Registered
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               message:
+#                 type: string
+#                 example: Registered
+# ```
+
+# /auth/login:
+# post:
+# tags:
+# - Auth
+# summary: Login user
+# description: Send verification code to user email
+# requestBody:
+# required: true
+# content:
+# application/json:
+# schema:
+# type: object
+# required:
+# - email
+# - password
+# properties:
+# email:
+# type: string
+# example: [aziz@gmail.com](mailto:aziz@gmail.com)
+# password:
+# type: string
+# example: Password123
+
+# ```
+#   responses:
+#     "200":
+#       description: Verification code sent
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               message:
+#                 type: string
+#                 example: Please check your email for the code
+# ```
+
+# /auth/verify:
+# post:
+# tags:
+# - Auth
+# summary: Verify OTP code
+# description: Verify email code and receive JWT token
+# requestBody:
+# required: true
+# content:
+# application/json:
+# schema:
+# type: object
+# required:
+# - email
+# - code
+# properties:
+# email:
+# type: string
+# example: [aziz@gmail.com](mailto:aziz@gmail.com)
+# code:
+# type: string
+# example: "123456"
+
+# ```
+#   responses:
+#     "200":
+#       description: Verification successful
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               message:
+#                 type: string
+#                 example: Success
+#               token:
+#                 type: string
+#                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# ```
+
+# /auth/refresh:
+# get:
+# tags:
+# - Auth
+# summary: Refresh access token
+# description: Generate new access token using refresh token
+
+# ```
+#   responses:
+#     "200":
+#       description: New access token generated
+# ```
+
+# /auth/logout:
+# get:
+# tags:
+# - Auth
+# summary: Logout user
+# description: Clear access and refresh token cookies
+
+# ```
+#   responses:
+#     "200":
+#       description: Successfully logged out
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               message:
+#                 type: string
+#                 example: ok
+# ```
+
+# components:
+# securitySchemes:
+# bearerAuth:
+# type: http
+# scheme: bearer
+# bearerFormat: JWT
+

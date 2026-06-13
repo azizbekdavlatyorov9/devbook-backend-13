@@ -13,7 +13,7 @@ module.exports = function refreshToken(req, res, next) {
     req.user = decode;
 
     const payload = {
-      id: req.user._id,
+      id: req.user.id,
       email: req.user.email,
       role: req.user.role,
     };

@@ -1,36 +1,54 @@
-const Like = require("../schema/like.schema");
 const CustomErrorHandler = require("../error/error");
+const CitationSchema = require("../schema/citation.schema");
+const LikeSchema = require("../schema/like.schema");
+const mongoose = require("mongoose");
 
-const addLike = async (req, res, next) => {
+const Like = async (req, res) => {
   try {
-    const { citation_id } = req.body;
-    const user_id = req.user.id;
+    const { id } = req.params;
 
-    const foundedLike = await Like.findOne({
-      user_id,
-      citation_id,
+    const foundedCitation = await CitationSchema.findOne({
+      _id: id,
     });
-
-    if (foundedLike) {
-      throw CustomErrorHandler.BadRequest(
-        "Siz allaqachon like bosgansiz"
-      );
+    if (!foundedCitation) {
+      throw CustomErrorHandler.NotFound("Citation not found");
     }
 
-    const like = await Like.create({
-      user_id,
-      citation_id,
-    });
+    const foundedUserLike = await LikeSchema.find({ user_id: req.user.id });
+    
 
-    res.status(201).json({
-      message: "Like qo'shildi",
-      data: like,
+    if (foundedUserLike.length === 0) {
+      await LikeSchema.create({
+        user_id: req.user.id,
+        citation_id: id,
+      });
+    }
+
+    const objectId = new mongoose.Types.ObjectId(id);
+
+    const userLikes = await foundedUserLike.find((like) => like.citation_id.equals(objectId));
+
+    if(userLikes){
+      await LikeSchema.findByIdAndDelete(userLikes._id
+      )
+    }else(
+      await LikeSchema.create({
+        user_id: req.user.id,
+        citation_id: id,
+      })
+    )
+    
+
+    res.status(200).json({
+      message: "OK",
     });
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      message: error.message
+    });
   }
 };
 
 module.exports = {
-  addLike,
+  Like,
 };

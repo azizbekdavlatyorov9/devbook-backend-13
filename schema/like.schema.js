@@ -4,7 +4,7 @@ const Like = new Schema(
   {
     user_id: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Auth",
       required: true,
     },
     citation_id: {
