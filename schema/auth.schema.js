@@ -5,7 +5,7 @@ const Auth = new Schema(
     username: {
       type: String,
       required: true,
-      set: (value) => value.trim(),
+      trim:true,
       minLength: [3, "Ism kamida 3 ta belgidan iborat bo'lishi kerak"],
       maxLength: 50,
       match: /^[a-zA-Z\s]+$/,
